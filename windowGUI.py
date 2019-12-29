@@ -22,10 +22,7 @@ class App(QWidget):
         self.width = 800
         self.height = 480
         self.initUI()
-        self.threadclass = ThreadClass()
-        self.threadclass.start()
 
-        self.show()
 
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -47,7 +44,7 @@ class App(QWidget):
         eventLabel = QLabel(self)
         eventLabel.setStyleSheet("color: rgb(252, 210, 0);")
         eventLabel.setFont(QtGui.QFont('SansSerif', 30))
-        eventLabel.setText("Marvel Mondays! Dante \n Avengers Endgame " + str(x))
+        eventLabel.setText("Marvel Mondays! Dante \n Avengers Endgame ")
         eventLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         eventLabel.setAlignment(Qt.AlignCenter)
         eventLabel.move(170,150)
@@ -60,21 +57,17 @@ class App(QWidget):
         timeLabel.setAlignment(Qt.AlignCenter)
         timeLabel.move(220, 300)
 
-class ThreadClass(QtCore.QThread):
-    def __init__(self, parent = None):
-        super(ThreadClass, self).__init__(parent)
+        self.show()
 
-    def run(self):
-        x = 0
-        while True:
-            time.sleep(1)
-            x+=1
-            print(x)
+    def updateEvent(self):
+        print('hello')
+        self.eventLabel.setText('hello')
+        return 6
 
 if __name__ == '__main__':
     while True:
         x = 0
         app = QApplication(sys.argv)
         ex = App()
+        ex.updateEvent()
         sys.exit(app.exec_())
-        x+=1
