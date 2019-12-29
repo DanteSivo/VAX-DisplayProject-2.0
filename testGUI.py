@@ -1,14 +1,15 @@
 from tkinter import *
-from time import sleep
+# Let's create the Tkinter window.
+window = Tk()
+window.title("GUI")
+window.geometry("800x480")
 
-root = Tk()
-var = StringVar()
-var.set('hello')
+label = Label(window,text=("Event name here"),anchor= 's', height = 13) #set your text
+label.pack()
+labels.append(label) #appends the label to the list for further use
 
-l = Label(root, textvariable = var)
-l.pack()
+label2 = Label(window,text="Event time here",anchor= 'n', height = 13) #set your text
+label2.pack()
+labels.append(label2) #appends the label to the list for further use
 
-for i in range(6):
-    sleep(1) # Need this to slow the changes down
-    var.set('goodbye' if i%2 else 'hello')
-    root.update_idletasks()
+mainloop()
