@@ -43,7 +43,7 @@ class Application(Frame):
         self.timeVar.set(var)
         self.after(1000, self.onUpdate)
 
-globalX = 1
+globalX = 0
 window = Tk()
 window.title("GUI")
 window.geometry("800x480")
