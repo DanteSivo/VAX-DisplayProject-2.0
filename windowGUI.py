@@ -1,7 +1,9 @@
 from tkinter import *
+import quickstart
 
 def getCount():
     global globalX
+    quickstart.main()
     globalX += 1
     return globalX
 

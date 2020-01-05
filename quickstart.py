@@ -60,7 +60,7 @@ def parseEvents(eventsList):
         loopCount+= 1
     return parsedEvents
 
-if __name__ == '__main__':
+def main():
     eventsList = getEvents()   # Return an array of the next 3 upcoming events. (The Current / Ongoing, and the future 2).
     for event in eventsList:
         start = event['start'].get('dateTime', event['start'].get('date'))
