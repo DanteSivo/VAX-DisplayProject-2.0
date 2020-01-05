@@ -1,11 +1,11 @@
 from tkinter import *
 import quickstart
 
-def getCount():
-    global globalX
-    quickstart.main()
-    globalX += 1
-    return globalX
+def updateEvent():
+    eventsList = quickstart.main()
+    if (len(eventsList) <= 0):
+       return ["No events ongoing or planned!", ""]
+    return [eventsList, eventsList]
 
 class Application(Frame):
     def __init__(self, master=None):
@@ -15,8 +15,6 @@ class Application(Frame):
         self.createWidgets()
 
     def createWidgets(self):
-        # To Be Deleted
-
         self.photo = PhotoImage(file="images\sprocket150.png")
         self.w = Label(window, image=self.photo, bg='#024889')
         self.w.photo = self.photo
@@ -40,14 +38,14 @@ class Application(Frame):
 
     def onUpdate(self):
         # Updates the display
-        var = getCount()
-        self.eventVar.set(var)
-        self.timeVar.set(var)
-        self.after(1000, self.onUpdate)
+        displayStr = updateEvent()
+        self.eventVar.set(displayStr[0])
+        self.timeVar.set(displayStr[1])
+        self.after(250, self.onUpdate) # Loop update
 
-globalX = 0
+
 window = Tk()
-window.title("GUI")
+window.title("VAX Reservation Display")
 window.geometry("800x480")
 window.config(bg = '#024889')
 
