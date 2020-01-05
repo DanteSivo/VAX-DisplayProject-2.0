@@ -47,23 +47,11 @@ def getEvents():
         print('No upcoming events found.')
     return events;
 
-def parseEvents(eventsList):
-    parsedEvents = [None]*3 # Inialize array for the parsed 3 events.
-    loopCount = 0
-    for event in eventsList:
-        convertedEvent = {}
-        timeArray = event['start'].get('dateTime').split('T') # Split into date and start-end time
-        convertedEvent['date'] = timeArray[0]
-        convertedEvent['time'] = timeArray[1]
-        convertedEvent["name"] = event['summary']
-        parsedEvents[loopCount] = convertedEvent
-        loopCount+= 1
-    return parsedEvents
-
 def main():
     eventsList = getEvents()   # Return an array of the next 3 upcoming events. (The Current / Ongoing, and the future 2).
     for event in eventsList:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
-    parsedEvents = parseEvents(eventsList) # Parse event data into a useful dictionary
-    print(parsedEvents)
+    return eventsList
+
+main()
