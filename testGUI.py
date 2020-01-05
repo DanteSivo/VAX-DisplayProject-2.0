@@ -15,7 +15,7 @@ def getCount():
 
 class Application(Frame):
     def __init__(self, master=None):
-        self.frame = Frame.__init__(self, master, width = 800, height = 480)
+        self.frame = Frame.__init__(self, master, width = 800, height = 480, bg = '#024889')
         self.pack()
 
         self.createWidgets()
@@ -27,6 +27,9 @@ class Application(Frame):
         self.w = Label(window, image=self.photo, bg='#024889')
         self.w.photo = self.photo
         self.w.place(x=30, y=30)
+
+        self.vaxLabel = Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889', text = "What's going on in the VAX?")
+        self.vaxLabel.place(x=410, y=150, anchor="center")
 
         self.eventVar = StringVar()
         self.eventLabel = Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889')
