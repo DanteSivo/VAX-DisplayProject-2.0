@@ -10,8 +10,8 @@ import time
 
 def getCount():
     global globalX
-    globalX *= 2
-    return globalX + 1
+    globalX += 1
+    return globalX
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -20,17 +20,33 @@ class Application(tk.Frame):
         self.createWidgets()
 
     def createWidgets(self):
+        # To Be Deleted
         self.now = tk.StringVar()
         self.time = tk.Label(self, font=('Helvetica', 24))
-        self.time.pack(side="top")
+        #self.time.pack(side="top")
         self.time["textvariable"] = self.now
+
+        self.eventVar = tk.StringVar()
+        self.eventLabel = tk.Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889')
+        self.eventLabel.place(x=400, y=225, anchor="center")
+        self.eventLabel.pack()
+        self.eventLabel["textvariable"] = self.eventVar
+
+        self.timeVar = tk.StringVar()
+        self.eventLabel = tk.Label(self, font=("Tahoma", 20), fg='#fcd200', bg = '#024889')
+        self.eventLabel.place(x=400,y=275, anchor="center")
+        self.eventLabel.pack()
+        self.eventLabel["textvariable"] = self.timeVar
 
         # initial time display
         self.onUpdate()
 
     def onUpdate(self):
         # update displayed time
-        self.now.set(getCount())
+        var = getCount()
+        self.now.set(var)
+        self.eventVar.set(var)
+        self.timeVar.set(var)
         # schedule timer to call myself after 1 second
         self.after(1000, self.onUpdate)
 
