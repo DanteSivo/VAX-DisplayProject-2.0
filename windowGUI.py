@@ -1,10 +1,20 @@
 from tkinter import *
 import quickstart
+import time
 
 def updateEvent():
     eventsList = quickstart.main()
     if (len(eventsList) <= 0):
        return ["No events ongoing or planned!", ""]
+    else: # There must be at least 1 event in the calendar
+        startTime = eventsList[0]['start'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
+        startDate = startTime[0] # End date of the event
+        startTime = startTime[1] # Start time of the Event
+        endTime = eventsList[0]['end'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
+        endDate = endTime[0] # End date of the event
+        endTime = endTime[1] # End time of the event
+
+        return [startDate, startTime]
     return [eventsList, eventsList]
 
 class Application(Frame):
