@@ -9,14 +9,12 @@ def updateEvent():
    # There must be at least 1 event in the calendar
     startTime = eventsList[0]['start'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
     startDate = startTime[0].split('-') # Start date of the event Y/M/D format
-    startTime = startTime[1].split(':') # Start time of the event
-    startTime = startTime[0].split(':') # H/M/S format
+    startTime = startTime[1].split(':') # H/M/timeZone/S format
     endTime = eventsList[0]['end'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
     endDate = endTime[0].split('-') # End date of the event Y/M/D format
     endTime = endTime[1].split('-') # End time of the event
     endTime = endTime[0].split(':') # H/M/S format
     eventOngoing = isEventOngoing(startTime, startDate, endTime, endDate)
-    print(eventOngoing)
     return [eventsList, eventsList]
 
 '''isEventOngoing() - A function that determines if an event is going on (TRUE) or if it's coming up (FALSE)
@@ -25,8 +23,9 @@ Output - FALSE = Event is not ongoing, TRUE = Event is ongoing
 '''
 def isEventOngoing(startTime, startDate, endTime, endDate):
     now = datetime.now() # %H - Hour, #M - Minute , %S - Second, %D - Date, %m - Month /%d - Day /%Y - Year using .strftime()
-    if ((now.strftime('%Y') >= endDate[0]) & (now.strftime('%m') >= endDate[1]) & (now.strftime('%d') >= endDate[2])): # Check the date, if start was before or at current
-        return True
+    if ((now.strftime('%Y') >= startDate[0]) & (now.strftime('%m') >= startDate[1]) & (now.strftime('%d') >= startDate[2])): # Check the date, if start was before or at current
+        if ((now.strftime('%H') >= startTime[0]) & (now.strftime('%M') >= startTime[1]) & (now.strftime('%S') >= startTime[3])):
+            return True
     return False # All other cases, event has been proven to not be ongoing
 
 class Application(Frame):
