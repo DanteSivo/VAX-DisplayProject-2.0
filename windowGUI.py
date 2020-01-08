@@ -1,24 +1,36 @@
 from tkinter import *
 import quickstart
-import time
+from datetime import datetime
 
 def updateEvent():
     eventsList = quickstart.main()
     if (len(eventsList) <= 0):
        return ["No events ongoing or planned!", ""]
-    else: # There must be at least 1 event in the calendar
-        startTime = eventsList[0]['start'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
-        startDate = startTime[0] # End date of the event
-        startTime = startTime[1] # Start time of the Event
-        endTime = eventsList[0]['end'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
-        endDate = endTime[0] # End date of the event
-        endTime = endTime[1] # End time of the event
-
-        return [startDate, startTime]
+   # There must be at least 1 event in the calendar
+    startTime = eventsList[0]['start'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
+    startDate = startTime[0].split('-') # Start date of the event Y/M/D format
+    startTime = startTime[1].split(':') # Start time of the event
+    startTime = startTime[0].split(':') # H/M/S format
+    endTime = eventsList[0]['end'].get('dateTime', eventsList[0]['start'].get('date')).split('T') # basic parsing
+    endDate = endTime[0].split('-') # End date of the event Y/M/D format
+    endTime = endTime[1].split('-') # End time of the event
+    endTime = endTime[0].split(':') # H/M/S format
+    eventOngoing = isEventOngoing(startTime, startDate, endTime, endDate)
+    print(eventOngoing)
     return [eventsList, eventsList]
 
+'''isEventOngoing() - A function that determines if an event is going on (TRUE) or if it's coming up (FALSE)
+Parameters - Self descriptive, all passed in from updateEvent()
+Output - FALSE = Event is not ongoing, TRUE = Event is ongoing
+'''
+def isEventOngoing(startTime, startDate, endTime, endDate):
+    now = datetime.now() # %H - Hour, #M - Minute , %S - Second, %D - Date, %m - Month /%d - Day /%Y - Year using .strftime()
+    if ((now.strftime('%Y') >= endDate[0]) & (now.strftime('%m') >= endDate[1]) & (now.strftime('%d') >= endDate[2])): # Check the date, if start was before or at current
+        return True
+    return False # All other cases, event has been proven to not be ongoing
+
 class Application(Frame):
-    def __init__(self, master=None):
+    def __init__(self, master=None): # Class constructor
         self.frame = Frame.__init__(self, master, width = 800, height = 480, bg = '#024889')
         self.pack()
 
