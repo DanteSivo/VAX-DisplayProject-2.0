@@ -17,10 +17,11 @@ def updateEvent():
     eventOngoing = isEventOngoing(startTime, startDate, endTime, endDate)
 
     getTimeDisplay = timeParse(startTime, endTime)
+    getEventDisplay = eventParse(eventsList[0].get('summary'))
 
     if (eventOngoing):
         # Update label text to show the event in ongoing
-        return ["Right Now: " + eventsList[0].get('summary'), getTimeDisplay]
+        return ["Right Now: " + getEventDisplay, getTimeDisplay]
     return [eventsList, eventsList]
 
 '''isEventOngoing() - A function that determines if an event is going on (TRUE) or if it's coming up (FALSE)
@@ -54,18 +55,26 @@ def timeParse(startTime, endTime):
         endM = " AM"
     return str(startHour) + ':' + startTime[1] + startM  + " - " + str(endHour) + ':' + endTime[1] + endM
 
+def eventParse(eventName):
+    if (len(eventName) >= 35):
+        if (eventName[34] != ' ' and eventName[35] != ' '):
+            dash = '-'
+        else:
+            dash = ''
+        eventName = eventName[0:35] + dash + '\n' + eventName[35:]
+    return eventName
+
 class Application(Frame):
     def __init__(self, master=None): # Class constructor
         self.frame = Frame.__init__(self, master, width = 800, height = 480, bg = '#024889')
         self.pack()
-
         self.createWidgets()
 
     def createWidgets(self):
         self.photo = PhotoImage(file="images\sprocket150.png")
         self.w = Label(window, image=self.photo, bg='#024889')
         self.w.photo = self.photo
-        self.w.place(x=20, y=20)
+        self.w.place(x=10, y=10)
 
         self.vaxLabel = Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889', text = "What's going on in the VAX?")
         self.vaxLabel.place(x=410, y=150, anchor="center")
@@ -77,7 +86,7 @@ class Application(Frame):
 
         self.timeVar = StringVar()
         self.timeLabel = Label(self, font=("Tahoma", 20), fg='#fcd200', bg = '#024889')
-        self.timeLabel.place(x=400,y=300, anchor="center")
+        self.timeLabel.place(x=400,y=320, anchor="center")
         self.timeLabel["textvariable"] = self.timeVar
 
         self.clockVar = StringVar()
@@ -102,6 +111,5 @@ window = Tk()
 window.title("VAX Reservation Display")
 window.geometry("800x480")
 window.config(bg = '#024889')
-
 app = Application(master=window)
 window.mainloop()
