@@ -8,7 +8,7 @@ def updateEvent():
        return ["No events ongoing or planned!", ""]
    # There must be at least 1 event in the calendar
 
-    event = vaxCheck(eventsList) # Are any of these events going on in the VAX???
+    event = eventsList[0] # Are any of these events going on in the VAX???
     if (event == None):
         return ["No events planned", ""]
 
@@ -30,21 +30,32 @@ def updateEvent():
     # if the event is in the future
     return ["Next Event: " + getEventDisplay, getTimeDisplay + ' ' + endDate[1] + '/' + endDate[2] + '/' + endDate[0]]
 
-"""vaxCheck() - Determine the soonest event if any, that is in the VAX! Returns the event if found
-"""
-def vaxCheck(eventList):
+def updateUpcoming():
+    eventsList = quickstart.main()
+    if (len(eventsList) <= 2):
+        return ["", ""]
+    # There must be at least 2 events in the calendar
+    event = eventsList[1]
+    if (event == None):
+        return ["No events planned", ""]
 
-    for index in range(len(eventList)):
-        summary = eventList[index].get('summary')
-        if (summary != None):
-            if (summary.find("VAX") >= 0) or (summary.find("vax") >= 0) or (summary.find("Vax") >= 0): # If the word VAX is in the title
-                    return eventList[index]
-        location = eventList[index].get('location')
-        if (location != None):
-            if ((location.find("VAX") >= 0) or (location.find("vax") >= 0) or (location.find("Vax") >= 0)):
-                    return eventList[index]
+    start = event['start'].get('dateTime', event['start'].get('date')).split('T')  # basic parsing
+    startDate = start[0].split('-')  # Start date of the event Y/M/D format
+    startTime = start[1].split(':')  # H/M/timeZone/S format
+    end = event['end'].get('dateTime', event['start'].get('date')).split('T')  # basic parsing
+    endDate = end[0].split('-')  # End date of the event Y/M/D format
+    endTime = end[1].split('-')  # End time of the event
+    endTime = endTime[0].split(':')  # H/M/S format
+    eventOngoing = isEventOngoing(startTime, startDate, endTime, endDate)
 
-    return None # If no event found within the range - return such
+    getTimeDisplay = timeParse(startTime, endTime)
+    getEventDisplay = eventParse(eventsList[1].get('summary'))
+
+    if (eventOngoing):
+        # Update label text to show the event in ongoing
+        return ["Upcoming: " + getEventDisplay, getTimeDisplay]
+    # if the event is in the future
+    return ["Upcoming: " + getEventDisplay, getTimeDisplay + ' ' + endDate[1] + '/' + endDate[2] + '/' + endDate[0]]
 
 '''isEventOngoing() - A function that determines if an event is going on (TRUE) or if it's coming up (FALSE)
 Parameters - Self descriptive, all passed in from updateEvent()
@@ -75,6 +86,12 @@ def timeParse(startTime, endTime):
         endHour -= 12
     else:
         endM = " AM"
+
+    if (startHour == 0):
+        startHour = 12
+
+    if (endHour == 0):
+        endHour = 12
     return str(startHour) + ':' + startTime[1] + startM  + " - " + str(endHour) + ':' + endTime[1] + endM
 
 def eventParse(eventName):
@@ -99,31 +116,48 @@ class Application(Frame):
         self.w.place(x=10, y=10)
 
         self.vaxLabel = Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889', text = "What's going on in the VAX?")
-        self.vaxLabel.place(x=410, y=150, anchor="center")
+        self.vaxLabel.place(x=410, y=130, anchor="center")
 
         self.eventVar = StringVar()
-        self.eventLabel = Label(self, font=("Tahoma", 26), fg='#fcd200', bg = '#024889')
-        self.eventLabel.place(x=400, y=250, anchor="center")
+        self.eventLabel = Label(self, font=("Tahoma", 20), fg='#fcd200', bg = '#024889')
+        self.eventLabel.place(x=400, y=230, anchor="center")
         self.eventLabel["textvariable"] = self.eventVar
 
-        self.timeVar = StringVar()
-        self.timeLabel = Label(self, font=("Tahoma", 20), fg='#fcd200', bg = '#024889')
-        self.timeLabel.place(x=400,y=320, anchor="center")
-        self.timeLabel["textvariable"] = self.timeVar
+        self.eventTimeVar = StringVar()
+        self.eventTimeLabel = Label(self, font=("Tahoma", 16), fg='#fcd200', bg = '#024889')
+        self.eventTimeLabel.place(x=400,y=280, anchor="center")
+        self.eventTimeLabel["textvariable"] = self.eventTimeVar
 
+        self.upcomingEventVar = StringVar()
+        self.upcomingEventLabel = Label(self, font=("Tahoma", 20), fg='#fcd200', bg='#024889')
+        self.upcomingEventLabel.place(x=400, y=350, anchor="center")
+        self.upcomingEventLabel["textvariable"] = self.upcomingEventVar
+
+        self.upcomingTimeVar = StringVar()
+        self.upcomingTimeLabel = Label(self, font=("Tahoma", 16), fg='#fcd200', bg='#024889')
+        self.upcomingTimeLabel.place(x=400, y=400, anchor="center")
+        self.upcomingTimeLabel["textvariable"] = self.upcomingTimeVar
+
+        '''
         self.clockVar = StringVar()
         self.clockLabel = Label(self, font=("Tahoma", 14), fg='#fcd200', bg='#024889')
         self.clockLabel.place(x=690, y=460, anchor="center")
         self.clockLabel["textvariable"] = self.clockVar
-
+        '''
         # initial time display
         self.onUpdate()
 
     def onUpdate(self):
         # Updates the display
-        displayStr = updateEvent()
-        self.eventVar.set(displayStr[0])
-        self.timeVar.set(displayStr[1])
+        eventDisplayStr = updateEvent()
+        self.eventVar.set(eventDisplayStr[0])
+        self.eventTimeVar.set(eventDisplayStr[1])
+
+        upcomingDisplayStr = updateUpcoming()
+        self.upcomingEventVar.set(upcomingDisplayStr[0])
+        self.upcomingTimeVar.set(upcomingDisplayStr[1])
+
+        '''
         now = datetime.now()
         hour = int(now.strftime('%H'))
         if (hour > 12):  # Determine if the Start Time is AM or PM
@@ -131,8 +165,9 @@ class Application(Frame):
             hour -= 12
         else:
             ampm = " AM - "
-        self.clockVar.set(str(hour) + ":" + now.strftime("%M:%S") + ampm + now.strftime("%m/%d/%Y"))
-        self.after(10 * 1000, self.onUpdate) # Loop update
+        #self.clockVar.set(str(hour) + ":" + now.strftime("%M:%S") + ampm + now.strftime("%m/%d/%Y"))
+        '''
+        self.after(60 * 1000, self.onUpdate) # Loop update
 
 window = Tk()
 window.title("VAX Reservation Display")

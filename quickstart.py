@@ -47,8 +47,23 @@ def getEvents():
         print('No upcoming events found.')
     return events;
 
+def vaxCheck(eventList):
+    vaxEvents = []
+    for index in range(len(eventList)):
+        summary = eventList[index].get('summary')
+        if (summary != None):
+            if ((summary.find("VAX") >= 0) or (summary.find("vax") >= 0) or (summary.find("Vax") >= 0)): # If the word VAX is in the title
+                    vaxEvents.append(eventList[index])
+                    continue
+        location = eventList[index].get('location')
+        if (location != None):
+            if ((location.find("VAX") >= 0) or (location.find("vax") >= 0) or (location.find("Vax") >= 0)):
+                    vaxEvents.append(eventList[index])
+                    continue
+    return vaxEvents
+
 def main():
-    eventsList = getEvents()   # Return an array of the next 3 upcoming events. (The Current / Ongoing, and the future 2).
+    eventsList = vaxCheck(getEvents())   # Return an array of the next 3 upcoming events. (The Current / Ongoing, and the future 2).
     for event in eventsList:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
