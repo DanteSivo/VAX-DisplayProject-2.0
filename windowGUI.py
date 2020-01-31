@@ -53,7 +53,7 @@ def updateUpcoming():
 
     if (eventOngoing):
         # Update label text to show the event in ongoing
-        return ["Upcoming: " + getEventDisplay, getTimeDisplay]
+        return ["Also going on: " + getEventDisplay, getTimeDisplay]
     # if the event is in the future
     return ["Upcoming: " + getEventDisplay, getTimeDisplay + ' ' + endDate[1] + '/' + endDate[2] + '/' + endDate[0]]
 
@@ -92,7 +92,7 @@ def timeParse(startTime, endTime):
 
     if (endHour == 0):
         endHour = 12
-    return str(startHour) + ':' + startTime[1] + startM  + " - " + str(endHour) + ':' + endTime[1] + endM
+    return str(startHour) + ':' + startTime[1] + startM  + " - " + str(endHour) + ':' + endTime[1] + endM + ' -'
 
 def eventParse(eventName):
     if (len(eventName) >= 35):
