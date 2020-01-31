@@ -36,11 +36,14 @@ def vaxCheck(eventList):
 
     for index in range(len(eventList)):
         summary = eventList[index].get('summary')
-        if ((summary.find("VAX") >= 0) or (summary.find("vax") >= 0) or (summary.find("Vax") >= 0)): # If the word VAX is in the title
-            return eventList[index]
+        if (summary != None):
+            if (summary.find("VAX") >= 0) or (summary.find("vax") >= 0) or (summary.find("Vax") >= 0): # If the word VAX is in the title
+                    return eventList[index]
         location = eventList[index].get('location')
-        if ((location.find("VAX") >= 0) or (location.find("vax") >= 0) or (location.find("Vax") >= 0)):
-            return eventList[index]
+        if (location != None):
+            if ((location.find("VAX") >= 0) or (location.find("vax") >= 0) or (location.find("Vax") >= 0)):
+                    return eventList[index]
+
     return None # If no event found within the range - return such
 
 '''isEventOngoing() - A function that determines if an event is going on (TRUE) or if it's coming up (FALSE)
@@ -129,7 +132,7 @@ class Application(Frame):
         else:
             ampm = " AM - "
         self.clockVar.set(str(hour) + ":" + now.strftime("%M:%S") + ampm + now.strftime("%m/%d/%Y"))
-        self.after(250, self.onUpdate) # Loop update
+        self.after(10 * 1000, self.onUpdate) # Loop update
 
 window = Tk()
 window.title("VAX Reservation Display")
