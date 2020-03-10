@@ -1,6 +1,7 @@
 from tkinter import *
 import quickstart
 from datetime import datetime
+global counterex
 
 def updateEvent():
     eventsList = quickstart.main()
@@ -86,10 +87,8 @@ def timeParse(startTime, endTime):
         endHour -= 12
     else:
         endM = " AM"
-
     if (startHour == 0):
         startHour = 12
-
     if (endHour == 0):
         endHour = 12
     return str(startHour) + ':' + startTime[1] + startM  + " - " + str(endHour) + ':' + endTime[1] + endM + ' -'
@@ -105,12 +104,14 @@ def eventParse(eventName):
 
 class Application(Frame):
     def __init__(self, master=None): # Class constructor
+        global counterex
         self.frame = Frame.__init__(self, master, width = 800, height = 480, bg = '#024889')
         self.pack()
         self.createWidgets()
 
+
     def createWidgets(self):
-        self.photo = PhotoImage(file="images\sprocket150.png")
+        self.photo = PhotoImage(file="../images/sprocket150.png")
         self.w = Label(window, image=self.photo, bg='#024889')
         self.w.photo = self.photo
         self.w.place(x=10, y=10)
@@ -138,36 +139,26 @@ class Application(Frame):
         self.upcomingTimeLabel.place(x=400, y=400, anchor="center")
         self.upcomingTimeLabel["textvariable"] = self.upcomingTimeVar
 
-        '''
-        self.clockVar = StringVar()
-        self.clockLabel = Label(self, font=("Tahoma", 14), fg='#fcd200', bg='#024889')
-        self.clockLabel.place(x=690, y=460, anchor="center")
-        self.clockLabel["textvariable"] = self.clockVar
-        '''
         # initial time display
         self.onUpdate()
+
 
     def onUpdate(self):
         # Updates the display
         eventDisplayStr = updateEvent()
         self.eventVar.set(eventDisplayStr[0])
         self.eventTimeVar.set(eventDisplayStr[1])
-
+        global counterex
         upcomingDisplayStr = updateUpcoming()
         self.upcomingEventVar.set(upcomingDisplayStr[0])
         self.upcomingTimeVar.set(upcomingDisplayStr[1])
-
-        '''
-        now = datetime.now()
-        hour = int(now.strftime('%H'))
-        if (hour > 12):  # Determine if the Start Time is AM or PM
-            ampm = " PM - "
-            hour -= 12
-        else:
-            ampm = " AM - "
-        #self.clockVar.set(str(hour) + ":" + now.strftime("%M:%S") + ampm + now.strftime("%m/%d/%Y"))
-        '''
-        self.after(60 * 1000, self.onUpdate) # Loop update
+        try:
+            if counterex > 10: # Crash every 10 minuets
+                raise SystemExit
+            counterex += 1
+        except NameError:
+            counterex = 0
+        self.after(1000, self.onUpdate)  # Loop update - per 2 minutes
 
 window = Tk()
 window.title("VAX Reservation Display")
